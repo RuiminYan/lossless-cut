@@ -355,6 +355,7 @@ function App() {
 
   const frameCount = useFrameCount({
     enabled: frameCountVisible,
+    filePath,
     getRelevantTime,
     detectedFps,
     cutSegments,

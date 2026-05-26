@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import i18n from 'i18next';
 
 import type { SegmentBase, StateSegment, UpdateSegAtIndex } from '../types';
@@ -26,6 +26,29 @@ export function isFrameCountSegment(segment: { tags?: Record<string, string> | u
 }
 
 
+// Extracts a solve time from a filename like "1 0.688.mp4" → 0.688,
+// or "2x2 R1 1.07 avg.mp4" → 1.07. Returns the first decimal-bearing
+// number with a 1–3 digit integer part in the basename (extension stripped).
+export function parseSolveTimeFromFilename(pathOrName: string): number | undefined {
+  const fname = pathOrName.replaceAll('\\', '/').split('/').at(-1) ?? pathOrName;
+  const lastDot = fname.lastIndexOf('.');
+  const stem = lastDot > 0 ? fname.slice(0, lastDot) : fname;
+  const m = /(\d{1,3}):(\d{1,2}\.\d+)/.exec(stem);
+  if (m && m[1] != null && m[2] != null) {
+    const mins = Number(m[1]);
+    const secs = Number(m[2]);
+    if (Number.isFinite(mins) && Number.isFinite(secs)) {
+      const total = mins * 60 + secs;
+      if (total > 0 && total < 3600) return total;
+    }
+  }
+  const d = /\d{1,3}\.\d+/.exec(stem);
+  if (!d) return undefined;
+  const n = Number(d[0]);
+  return Number.isFinite(n) && n > 0 && n < 3600 ? n : undefined;
+}
+
+
 function parseInputTimeString(raw: string): number | undefined {
   const trimmed = raw.trim();
   if (!trimmed) return undefined;
@@ -45,6 +68,7 @@ function parseInputTimeString(raw: string): number | undefined {
 
 export default function useFrameCount({
   enabled,
+  filePath,
   getRelevantTime,
   detectedFps,
   cutSegments,
@@ -55,6 +79,7 @@ export default function useFrameCount({
   handleError,
 }: {
   enabled: boolean,
+  filePath: string | undefined,
   getRelevantTime: () => number,
   detectedFps: number | undefined,
   cutSegments: StateSegment[],
@@ -70,6 +95,12 @@ export default function useFrameCount({
   handleError: HandleError,
 }) {
   const [inputTimeStr, setInputTimeStr] = useState('');
+
+  useEffect(() => {
+    if (!filePath) return;
+    const parsed = parseSolveTimeFromFilename(filePath);
+    if (parsed != null) setInputTimeStr(String(parsed));
+  }, [filePath]);
 
   const solves = useMemo<FrameCountSolve[]>(() => (
     cutSegments.flatMap((segment, index) => {
