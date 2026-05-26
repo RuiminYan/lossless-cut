@@ -34,6 +34,8 @@ import TopMenu from './TopMenu';
 import LastCommands from './LastCommands';
 import StreamsSelector from './StreamsSelector';
 import SegmentList from './SegmentList';
+import FrameCountPanel from './components/FrameCountPanel';
+import useFrameCount from './hooks/useFrameCount';
 import Settings from './components/Settings';
 import Timeline from './Timeline';
 import BottomBar from './BottomBar';
@@ -167,6 +169,7 @@ function App() {
   const [ffmpegInfo, setFfmpegInfo] = useState<Awaited<ReturnType<typeof runStartupCheck>>>();
   const lastOpenedPathRef = useRef<string>();
   const [showRightBar, setShowRightBar] = useState(true);
+  const frameCountVisible = true;
   const [lastCommandsVisible, setLastCommandsVisible] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [tunerVisible, setTunerVisible] = useState<TunerType>();
@@ -349,6 +352,18 @@ function App() {
   } = useSegments({ filePath, workingRef, setWorking, setProgress, videoStream: activeVideoStream, fileDuration, getRelevantTime, maxLabelLength, checkFileOpened, invertCutSegments, segmentsToChaptersOnly, timecodePlaceholder, parseTimecode, appendFfmpegCommandLog, fileDurationNonZero, mainFileMeta: mainFileMeta?.ffprobeMeta, seekAbs, activeVideoStreamIndex, activeAudioStreamIndexes, handleError, showGenericDialog, simpleMode, ffmpegHwaccel });
 
   const { getEdlFilePath, projectFileSavePath, getProjectFileSavePath } = useSegmentsAutoSave({ autoSaveProjectFile, storeProjectInWorkingDir, filePath, customOutDir, cutSegments });
+
+  const frameCount = useFrameCount({
+    enabled: frameCountVisible,
+    getRelevantTime,
+    detectedFps,
+    cutSegments,
+    loadCutSegments,
+    removeSegment,
+    updateSegAtIndex,
+    fileDuration,
+    handleError,
+  });
 
   const { nonCopiedExtraStreams, exportExtraStreams, mainCopiedThumbnailStreams, numStreamsToCopy, toggleStripVideo, toggleStripAudio, toggleStripSubtitle, toggleStripThumbnail, toggleStripAll, copyStreamIdsByFile, setCopyStreamIdsByFile, copyFileStreams, mainCopiedStreams, setCopyStreamIdsForPath, toggleCopyStreamId, isCopyingStreamId, toggleCopyStreamIds, changeEnabledStreamsFilter, applyEnabledStreamsFilter, enabledStreamsFilter, toggleCopyAllStreamsForPath } = useStreamsMeta({ mainStreams, externalFilesMeta, filePath, autoExportExtraStreams, showGenericDialog });
 
@@ -2117,13 +2132,15 @@ function App() {
       labelSelectedSegments,
       mutateSegmentsByExpr,
 
+      frameCountAdd: frameCount.addSolve,
+
       // also called from menu (note: no longer a toggle. Esc must be used to close it because it's a dialog now):
       toggleKeyboardShortcuts,
       generateOverviewWaveform,
     };
 
     return ret;
-  }, [togglePlaySelectedSegments, toggleLoopSelectedSegments, pause, timelineToggleComfortZoom, captureSnapshot, captureSnapshotAsCoverArt, captureSnapshotToClipboard, setCutStart, setCutEnd, cleanupFilesDialog, splitCurrentSegment, focusSegmentAtCursor, selectSegmentsAtCursor, increaseRotation, jumpCutStart, jumpCutEnd, jumpTimelineStart, jumpTimelineEnd, batchOpenSelectedFile, closeBatch, addSegment, duplicateCurrentSegment, toggleLastCommands, extractCurrentSegmentFramesAsImages, extractSelectedSegmentsFramesAsImages, reorderSegsByStartTime, invertAllSegments, fillSegmentsGaps, combineOverlappingSegments, combineSelectedSegments, createFixedDurationSegments, createNumSegments, createFixedByteSizedSegments, createRandomSegments, alignSegmentTimesToKeyframes, shuffleSegments, clearSegments, toggleSegmentsList, toggleStreamsSelector, extractAllStreams, convertFormatBatch, concatBatch, toggleCaptureFormat, toggleStripAudio, toggleStripVideo, toggleStripSubtitle, toggleStripThumbnail, toggleStripAll, toggleDarkMode, askStartTimeOffset, deselectAllSegments, selectAllSegments, selectOnlyCurrentSegment, editCurrentSegmentTags, toggleCurrentSegmentSelected, invertSelectedSegments, removeSelectedSegments, tryFixInvalidDuration, shiftAllSegmentTimes, toggleMuted, copySegmentsToClipboard, handleShowStreamsSelectorClick, openFilesDialog, openDirDialog, toggleSettings, detectBlackScenes, detectSilentScenes, detectSceneChanges, readAllKeyframes, createSegmentsFromKeyframes, toggleWaveformMode, toggleShowThumbnails, toggleShowKeyframes, showIncludeExternalStreamsDialog, toggleFullscreenVideo, selectAllMarkers, selectSegmentsByLabel, selectSegmentsByExpr, labelSelectedSegments, mutateSegmentsByExpr, toggleKeyboardShortcuts, generateOverviewWaveform, checkFileOpened, cutSegments, seekRel, keyboardSeekAccFactor, togglePlay, play, userChangePlaybackRate, goToTimecode, keyboardNormalSeekSpeed, keyboardSeekSpeed2, keyboardSeekSpeed3, seekRelPercent, seekClosestKeyframe, shortStep, jumpSeg, zoomRel, batchFileJump, removeSegment, currentSegIndexSafe, cutSegmentsHistory, labelSegment, onExportPress, userHtml5ifyCurrentFile, toggleKeyframeCut, applyEnabledStreamsFilter, setPlaybackVolume, commandedTimeRef, closeFileWithConfirm, openSendReportDialogWithState]);
+  }, [togglePlaySelectedSegments, toggleLoopSelectedSegments, pause, timelineToggleComfortZoom, captureSnapshot, captureSnapshotAsCoverArt, captureSnapshotToClipboard, setCutStart, setCutEnd, cleanupFilesDialog, splitCurrentSegment, focusSegmentAtCursor, selectSegmentsAtCursor, increaseRotation, jumpCutStart, jumpCutEnd, jumpTimelineStart, jumpTimelineEnd, batchOpenSelectedFile, closeBatch, addSegment, duplicateCurrentSegment, toggleLastCommands, extractCurrentSegmentFramesAsImages, extractSelectedSegmentsFramesAsImages, reorderSegsByStartTime, invertAllSegments, fillSegmentsGaps, combineOverlappingSegments, combineSelectedSegments, createFixedDurationSegments, createNumSegments, createFixedByteSizedSegments, createRandomSegments, alignSegmentTimesToKeyframes, shuffleSegments, clearSegments, toggleSegmentsList, toggleStreamsSelector, extractAllStreams, convertFormatBatch, concatBatch, toggleCaptureFormat, toggleStripAudio, toggleStripVideo, toggleStripSubtitle, toggleStripThumbnail, toggleStripAll, toggleDarkMode, askStartTimeOffset, deselectAllSegments, selectAllSegments, selectOnlyCurrentSegment, editCurrentSegmentTags, toggleCurrentSegmentSelected, invertSelectedSegments, removeSelectedSegments, tryFixInvalidDuration, shiftAllSegmentTimes, toggleMuted, copySegmentsToClipboard, handleShowStreamsSelectorClick, openFilesDialog, openDirDialog, toggleSettings, detectBlackScenes, detectSilentScenes, detectSceneChanges, readAllKeyframes, createSegmentsFromKeyframes, toggleWaveformMode, toggleShowThumbnails, toggleShowKeyframes, showIncludeExternalStreamsDialog, toggleFullscreenVideo, selectAllMarkers, selectSegmentsByLabel, selectSegmentsByExpr, labelSelectedSegments, mutateSegmentsByExpr, toggleKeyboardShortcuts, generateOverviewWaveform, checkFileOpened, cutSegments, seekRel, keyboardSeekAccFactor, togglePlay, play, userChangePlaybackRate, goToTimecode, keyboardNormalSeekSpeed, keyboardSeekSpeed2, keyboardSeekSpeed3, seekRelPercent, seekClosestKeyframe, shortStep, jumpSeg, zoomRel, batchFileJump, removeSegment, currentSegIndexSafe, cutSegmentsHistory, labelSegment, onExportPress, userHtml5ifyCurrentFile, toggleKeyframeCut, applyEnabledStreamsFilter, setPlaybackVolume, commandedTimeRef, closeFileWithConfirm, openSendReportDialogWithState, frameCount.addSolve]);
 
   const getKeyboardAction = useCallback((action: MainKeyboardAction) => mainActions[action], [mainActions]);
 
@@ -2557,48 +2574,65 @@ function App() {
 
                 <AnimatePresence>
                   {showRightBar && isFileOpened && filePath != null && (
-                    <SegmentList
-                      width={rightBarWidth}
-                      currentSegIndex={currentSegIndexSafe}
-                      cutSegments={cutSegments}
-                      inverseCutSegments={inverseCutSegments}
-                      getFrameCount={getFrameCount}
-                      formatTimecode={formatTimecode}
-                      onSegClick={setCurrentSegIndex}
-                      updateSegOrder={updateSegOrder}
-                      updateSegOrders={updateSegOrders}
-                      onLabelSegment={labelSegment}
-                      currentCutSeg={currentCutSeg}
-                      firstSegmentAtCursor={firstSegmentAtCursor}
-                      addSegment={addSegment}
-                      onDuplicateSegmentClick={duplicateSegment}
-                      removeSegment={removeSegment}
-                      onRemoveSelected={removeSelectedSegments}
-                      toggleSegmentsList={toggleSegmentsList}
-                      splitCurrentSegment={splitCurrentSegment}
-                      selectedSegments={segmentsOrInverse.selected}
-                      onSelectSingleSegment={selectOnlySegment}
-                      onToggleSegmentSelected={toggleSegmentSelected}
-                      onDeselectAllSegments={deselectAllSegments}
-                      onSelectAllSegments={selectAllSegments}
-                      onInvertSelectedSegments={invertSelectedSegments}
-                      onExtractSegmentsFramesAsImages={extractSegmentsFramesAsImages}
-                      onExtractSelectedSegmentsFramesAsImages={extractSelectedSegmentsFramesAsImages}
-                      jumpSegStart={jumpSegStart}
-                      jumpSegEnd={jumpSegEnd}
-                      onSelectSegmentsByLabel={selectSegmentsByLabel}
-                      onSelectSegmentsByExpr={selectSegmentsByExpr}
-                      onSelectAllMarkers={selectAllMarkers}
-                      onMutateSegmentsByExpr={mutateSegmentsByExpr}
-                      onLabelSelectedSegments={labelSelectedSegments}
-                      updateSegAtIndex={updateSegAtIndex}
-                      editingSegmentTags={editingSegmentTags}
-                      editingSegmentTagsSegmentIndex={editingSegmentTagsSegmentIndex}
-                      setEditingSegmentTags={setEditingSegmentTags}
-                      setEditingSegmentTagsSegmentIndex={setEditingSegmentTagsSegmentIndex}
-                      onEditSegmentTags={onEditSegmentTags}
-                      getSegEstimatedSize={getSegEstimatedSize}
-                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                      {frameCountVisible && (
+                        <div style={{ width: rightBarWidth, flexShrink: 0 }}>
+                          <FrameCountPanel
+                            inputTimeStr={frameCount.inputTimeStr}
+                            setInputTimeStr={frameCount.setInputTimeStr}
+                            solves={frameCount.solves}
+                            nextSolveIndex={frameCount.nextSolveIndex}
+                            addSolve={frameCount.addSolve}
+                            removeSolve={frameCount.removeSolve}
+                            updateSolveTime={frameCount.updateSolveTime}
+                            detectedFps={detectedFps}
+                            onJumpToSolve={(solve) => seekAbs(solve.startTime)}
+                          />
+                        </div>
+                      )}
+                      <SegmentList
+                        width={rightBarWidth}
+                        currentSegIndex={currentSegIndexSafe}
+                        cutSegments={cutSegments}
+                        inverseCutSegments={inverseCutSegments}
+                        getFrameCount={getFrameCount}
+                        formatTimecode={formatTimecode}
+                        onSegClick={setCurrentSegIndex}
+                        updateSegOrder={updateSegOrder}
+                        updateSegOrders={updateSegOrders}
+                        onLabelSegment={labelSegment}
+                        currentCutSeg={currentCutSeg}
+                        firstSegmentAtCursor={firstSegmentAtCursor}
+                        addSegment={addSegment}
+                        onDuplicateSegmentClick={duplicateSegment}
+                        removeSegment={removeSegment}
+                        onRemoveSelected={removeSelectedSegments}
+                        toggleSegmentsList={toggleSegmentsList}
+                        splitCurrentSegment={splitCurrentSegment}
+                        selectedSegments={segmentsOrInverse.selected}
+                        onSelectSingleSegment={selectOnlySegment}
+                        onToggleSegmentSelected={toggleSegmentSelected}
+                        onDeselectAllSegments={deselectAllSegments}
+                        onSelectAllSegments={selectAllSegments}
+                        onInvertSelectedSegments={invertSelectedSegments}
+                        onExtractSegmentsFramesAsImages={extractSegmentsFramesAsImages}
+                        onExtractSelectedSegmentsFramesAsImages={extractSelectedSegmentsFramesAsImages}
+                        jumpSegStart={jumpSegStart}
+                        jumpSegEnd={jumpSegEnd}
+                        onSelectSegmentsByLabel={selectSegmentsByLabel}
+                        onSelectSegmentsByExpr={selectSegmentsByExpr}
+                        onSelectAllMarkers={selectAllMarkers}
+                        onMutateSegmentsByExpr={mutateSegmentsByExpr}
+                        onLabelSelectedSegments={labelSelectedSegments}
+                        updateSegAtIndex={updateSegAtIndex}
+                        editingSegmentTags={editingSegmentTags}
+                        editingSegmentTagsSegmentIndex={editingSegmentTagsSegmentIndex}
+                        setEditingSegmentTags={setEditingSegmentTags}
+                        setEditingSegmentTagsSegmentIndex={setEditingSegmentTagsSegmentIndex}
+                        onEditSegmentTags={onEditSegmentTags}
+                        getSegEstimatedSize={getSegEstimatedSize}
+                      />
+                    </div>
                   )}
                 </AnimatePresence>
               </div>

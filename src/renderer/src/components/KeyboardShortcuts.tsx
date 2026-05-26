@@ -179,6 +179,7 @@ const KeyboardShortcuts = memo(({
     const batchFilesCategory = t('Batch file list');
     const otherCategory = t('Other operations');
     const streamsCategory = t('Tracks');
+    const frameCountCategory = t('Frame count');
 
     // eslint-disable-next-line no-shadow
     const actionsMap: ActionsMap = {
@@ -187,6 +188,11 @@ const KeyboardShortcuts = memo(({
       },
       toggleKeyboardShortcuts: {
         name: t('Keyboard & mouse shortcuts'),
+      },
+
+      frameCountAdd: {
+        name: t('Add solve at current frame (frame counting)'),
+        category: frameCountCategory,
       },
 
       // playbackCategory

@@ -92,7 +92,9 @@ const defaultKeyBindings: KeyBinding[] = [
 
   { keys: 'AltLeft+ArrowUp', action: 'increaseVolume' },
   { keys: 'AltLeft+ArrowDown', action: 'decreaseVolume' },
-  { keys: 'KeyM', action: 'toggleMuted' },
+  { keys: 'ShiftLeft+KeyM', action: 'toggleMuted' },
+
+  { keys: 'KeyM', action: 'frameCountAdd' },
 ];
 
 const defaults: Config = {
