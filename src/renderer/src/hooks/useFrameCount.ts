@@ -83,6 +83,7 @@ export default function useFrameCount({
   removeSegment,
   updateSegAtIndex,
   fileDuration,
+  seekAbs,
   handleError,
 }: {
   enabled: boolean,
@@ -99,6 +100,7 @@ export default function useFrameCount({
   removeSegment: (index: number, wholeSegment?: true) => void,
   updateSegAtIndex: UpdateSegAtIndex,
   fileDuration: number | undefined,
+  seekAbs: (val: number | undefined) => void,
   handleError: HandleError,
 }) {
   const [inputTimeStr, setInputTimeStr] = useState('');
@@ -162,11 +164,12 @@ export default function useFrameCount({
         ...(fileDuration != null && { clampDuration: fileDuration }),
         getNextCurrentSegIndex: (edl) => edl.length - 1,
       });
+      seekAbs(startTime);
       setInputTimeStr('');
     } catch (err) {
       handleError({ err, title: i18n.t('Failed to add solve') });
     }
-  }, [enabled, inputTimeStr, detectedFps, getRelevantTime, nextSolveIndex, loadCutSegments, fileDuration, handleError]);
+  }, [enabled, inputTimeStr, detectedFps, getRelevantTime, nextSolveIndex, loadCutSegments, fileDuration, seekAbs, handleError]);
 
   const removeSolve = useCallback((solveIndex: number) => {
     const idx = cutSegments.findIndex((s) => s.tags?.[FRAME_COUNT_TAG_INDEX] === String(solveIndex));

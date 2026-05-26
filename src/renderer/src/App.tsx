@@ -363,6 +363,7 @@ function App() {
     removeSegment,
     updateSegAtIndex,
     fileDuration,
+    seekAbs,
     handleError,
   });
 
