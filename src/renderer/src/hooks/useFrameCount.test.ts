@@ -12,7 +12,7 @@ it('parses solve time from typical cubing filenames (truncated to centiseconds)'
 
 it('handles paths with directories and odd extensions', () => {
   expect(parseSolveTimeFromFilename('Z:/cubing/260523 Liuzhou Open 2026/2x2 R1 1.07 avg.mp4')).toBe(1.07);
-  expect(parseSolveTimeFromFilename('C:\\videos\\1 0.688.mp4')).toBe(0.68);
+  expect(parseSolveTimeFromFilename(String.raw`C:\videos\1 0.688.mp4`)).toBe(0.68);
   expect(parseSolveTimeFromFilename('clip-3.149.mkv')).toBe(3.14);
 });
 
