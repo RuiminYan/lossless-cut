@@ -941,7 +941,7 @@
   "Seek one frame": "搜寻帧",
   "Smart cut is experimental and will not work on all files.": "智能切割是实验性功能，无法在所有文件上正常工作。",
   "There is a known issue in FFmpeg with cutting FLAC files. The file will be re-encoded, which is still lossless, but the export may be slower.": "FFmpeg 切割 FLAC 文件有一个已知问题。文件将会被重新编码，仍然是无损的，但导出会变慢。",
-  "This file contains an audio track that FFmpeg is unable to mux into the MP4 format, so MOV has been auto-selected as the default output format.": "此文件包含一个 FFmpeg 无法嵌入到 MP4 格式的音轨，所以自动选择 MOVE 作为默认输出格式。",
+  "This file contains an audio track that FFmpeg is unable to mux into the MP4 format, so MOV has been auto-selected as the default output format.": "此文件包含一个 FFmpeg 无法嵌入到 MP4 格式的音轨，所以自动选择 MOV 作为默认输出格式。",
   "Whether to preserve chapters from source file.": "是否保留源文件中的章节。",
   "You are not allowed to write the output file. This probably means that the file already exists with the wrong permissions, or you don't have write permissions to the output folder.": "不允许您写入输出文件。这可能是因为现有文件有错误的许可权限，或者您没有输出文件夹的写入许可权限。",
   "Minimum numeric padded length": "最小数值填空长度",

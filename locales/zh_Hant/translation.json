@@ -875,7 +875,7 @@
   "Seek one frame": "搜尋幀",
   "Seek one key frame": "搜尋關鍵幀",
   "Smart cut is experimental and will not work on all files.": "智能切割是實驗性功能，無法在所有檔案上正常工作。",
-  "This file contains an audio track that FFmpeg is unable to mux into the MP4 format, so MOV has been auto-selected as the default output format.": "此檔案包含一個 FFmpeg 無法嵌入到 MP4 格式的音軌，所以自動選擇 MOVE 作為默認輸出格式。",
+  "This file contains an audio track that FFmpeg is unable to mux into the MP4 format, so MOV has been auto-selected as the default output format.": "此檔案包含一個 FFmpeg 無法嵌入到 MP4 格式的音軌，所以自動選擇 MOV 作為默認輸出格式。",
   "Whether to preserve metadata from source file. Default: Global (file metadata), per-track and per-chapter metadata will be copied. Non-global: Only per-track and per-chapter metadata will be copied. None: No metadata will be copied": "是否保留原始檔中的中繼資料。預設值：全域（檔案中繼資料），複製每個軌道和每個章節的中繼資料。非全域：僅複製每個軌道和每個章節的中繼資料。無：不複製中繼資料。",
   "Combination is already bound to \"{{alreadyBoundKey}}\". Do you want to replace the existing binding?": "組合已被繫結到 {{alreadyBoundKey}} 。您想替換已有的繫結嗎？",
   "Configuration file": "設定檔",
