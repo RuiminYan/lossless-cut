@@ -26,9 +26,16 @@ export function isFrameCountSegment(segment: { tags?: Record<string, string> | u
 }
 
 
-// Extracts a solve time from a filename like "1 0.688.mp4" → 0.688,
+// WCA-style truncation to centiseconds: 0.688 → 0.68, 1.077 → 1.07.
+// (Times are *truncated*, not rounded, per WCA Regulations 9f.)
+function truncToCentiseconds(n: number): number {
+  return Math.floor(n * 100) / 100;
+}
+
+// Extracts a solve time from a filename like "1 0.688.mp4" → 0.68,
 // or "2x2 R1 1.07 avg.mp4" → 1.07. Returns the first decimal-bearing
-// number with a 1–3 digit integer part in the basename (extension stripped).
+// number with a 1–3 digit integer part in the basename (extension stripped),
+// truncated to centiseconds.
 export function parseSolveTimeFromFilename(pathOrName: string): number | undefined {
   const fname = pathOrName.replaceAll('\\', '/').split('/').at(-1) ?? pathOrName;
   const lastDot = fname.lastIndexOf('.');
@@ -39,13 +46,13 @@ export function parseSolveTimeFromFilename(pathOrName: string): number | undefin
     const secs = Number(m[2]);
     if (Number.isFinite(mins) && Number.isFinite(secs)) {
       const total = mins * 60 + secs;
-      if (total > 0 && total < 3600) return total;
+      if (total > 0 && total < 3600) return truncToCentiseconds(total);
     }
   }
   const d = /\d{1,3}\.\d+/.exec(stem);
   if (!d) return undefined;
   const n = Number(d[0]);
-  return Number.isFinite(n) && n > 0 && n < 3600 ? n : undefined;
+  return Number.isFinite(n) && n > 0 && n < 3600 ? truncToCentiseconds(n) : undefined;
 }
 
 
