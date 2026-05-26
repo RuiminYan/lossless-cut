@@ -2,6 +2,14 @@
 
 给速拧选手核查比赛视频用:**输入显示成绩 + 在视频里点拍表帧 → 自动反推起表帧**。
 
+## 下载和安装
+
+去 **[Releases 页面](https://github.com/RuiminYan/lossless-cut/releases/latest)** 下载 `LosslessCut-frame-count-win-x64.zip`,解压到任意目录,双击里面的 **`LosslessCut.exe`** 即可运行。**不需要安装**(绿色软件)。
+
+> Mac / Linux 用户暂时只能自己 build,见 [CONTRIBUTING.md](../CONTRIBUTING.md)。
+
+升级:重新下载新版 zip,覆盖原目录即可。配置和工程文件 (`.llc`) 保存在 `%APPDATA%\LosslessCut\`,不会丢。
+
 ## 一次完整流程
 
 1. **打开比赛视频**(直接拖进 LosslessCut 窗口)
