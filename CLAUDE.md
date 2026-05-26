@@ -57,3 +57,35 @@ The "select segments by expression" / "mutate segments by expression" feature ru
 - **Logging**: main uses Winston via `src/main/logger.ts` (`logger.info/error/...`). Renderer uses `console.*` (allowed by ESLint override).
 - **Errors**: throw `UserFacingError` (`src/renderer/errors.ts`) for messages that should be shown verbatim to the user; everything else gets a generic toast.
 - **Adding an IPC method**: add the handler in `src/main/index.ts` and include it in the exported `RemoteRpcApi` type — that's all renderer needs (the `Proxy` picks it up automatically and types flow through).
+
+## Fork-specific (frame-count fork on RuiminYan/lossless-cut-framecount)
+
+Default branch is `feature/frame-count`. `master` mirrors upstream — don't commit there.
+
+### Frame-count feature
+- Core logic: `src/renderer/src/hooks/useFrameCount.ts` (+ `.test.ts`). Solves stored as cut segments tagged `framecount.*` → reuse timeline/.llc/export for free; don't add a separate store.
+- UI: `src/renderer/src/components/FrameCountPanel.tsx`, wired in `App.tsx` next to SegmentList.
+- Hotkey: `frameCountAdd` (default `KeyM`); `toggleMuted` rebound to `Shift+M`. Defaults live in `src/main/configStore.ts`. **Existing user configs do NOT auto-update** — if user reports "M does nothing", tell them to rebind in Settings → Keyboard shortcuts (don't suggest deleting config.json).
+- Filename auto-fill: `parseSolveTimeFromFilename` truncates to centiseconds per WCA 9f (e.g. `0.688` → `0.68`). Don't round.
+- User-facing doc: `docs/frame-count.md` (Chinese). Pointer from `FORK-NOTES.md`.
+
+### Release workflow (Windows .exe → GitHub Release)
+After any UI/i18n change the user wants shipped:
+1. `yarn build`
+2. `yarn electron-builder --win dir` — **use `dir`, not `7z`**. The `7z` target needs winCodeSign whose 7z extract fails on non-admin Windows due to macOS symlinks. `dir` produces `dist/win-unpacked/` which is what we ship.
+3. Repack: `Compress-Archive -Path dist\win-unpacked\* -DestinationPath dist\LosslessCut-frame-count-win-x64.zip -Force` (~1 min).
+4. Replace release asset: `gh release delete-asset v<tag> LosslessCut-frame-count-win-x64.zip --repo RuiminYan/lossless-cut-framecount --yes` then `gh release upload v<tag> dist\LosslessCut-frame-count-win-x64.zip --repo RuiminYan/lossless-cut-framecount` (~4 min). **`--repo RuiminYan/lossless-cut-framecount` is mandatory** — without it gh defaults to upstream (mifi) and 404s.
+5. Verify locale freshness in shipped artifact before upload: `dist/win-unpacked/resources/locales/zh_Hans/translation.json` should have a newer mtime than the previous zip.
+
+### i18n changes
+1. Edit source strings → `node node_modules/i18next-cli/dist/esm/cli.js -c i18next.config.scan.ts extract` (the `yarn scan-i18n` wrapper sometimes exits -1 silently — call the CLI directly).
+2. Add the new keys to **both** `locales/zh_Hans/translation.json` and `locales/zh_Hant/translation.json` by hand. Additive-only edits don't conflict with Weblate.
+3. Other locales: leave for Weblate.
+
+### Dev environment quirks (this machine)
+- Yarn isn't on PATH — run via `node .yarn/releases/yarn-4.11.0.cjs <cmd>` or `corepack yarn <cmd>`.
+- FFmpeg in dev: hardcoded to `ffmpeg/win32-x64/lib/ffmpeg.exe` (NOT PATH). If missing, `yarn download-ffmpeg-win32-x64` or copy a static build there.
+- Electron binary: if `node_modules/electron/dist/electron.exe` is missing after install (network interrupt), download `electron-v<ver>-win32-x64.zip` from `https://github.com/electron/electron/releases`, extract to `node_modules/electron/dist/`, and write `electron.exe` into `node_modules/electron/path.txt`.
+
+### CI
+`.github/workflows/fork-build.yml` builds Mac/Win/Linux on tags `v*-frame-count.*` or `workflow_dispatch`. Upstream's `build.yml` is disabled on this fork (`gh workflow disable build.yml --repo RuiminYan/lossless-cut-framecount`) — don't re-enable it.

@@ -4,7 +4,7 @@
 
 ## 下载和安装
 
-去 **[Releases 页面](https://github.com/RuiminYan/lossless-cut/releases/latest)** 下载 `LosslessCut-frame-count-win-x64.zip`,解压到任意目录,双击里面的 **`LosslessCut.exe`** 即可运行。**不需要安装**(绿色软件)。
+去 **[Releases 页面](https://github.com/RuiminYan/lossless-cut-framecount/releases/latest)** 下载 `LosslessCut-frame-count-win-x64.zip`,解压到任意目录,双击里面的 **`LosslessCut.exe`** 即可运行。**不需要安装**(绿色软件)。
 
 > Mac / Linux 用户暂时只能自己 build,见 [CONTRIBUTING.md](../CONTRIBUTING.md)。
 

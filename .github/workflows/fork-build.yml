@@ -5,7 +5,7 @@ name: Fork build
 # v*-frame-count.* or manually.
 #
 # Upstream's build.yml is disabled on this fork via:
-#   gh workflow disable --repo RuiminYan/lossless-cut build.yml
+#   gh workflow disable --repo RuiminYan/lossless-cut-framecount build.yml
 
 on:
   push:
